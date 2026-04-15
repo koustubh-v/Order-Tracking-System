@@ -17,12 +17,12 @@ const io = new Server(server, {
   }
 });
 
-// Postgres Setup
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@postgres:5432/analytics'
 });
 
-// Kafka Setup for Real-time push via WebSockets
+
 const kafka = new Kafka({
   clientId: 'analytics-backend',
   brokers: [process.env.KAFKA_BROKER || 'kafka:9092']
@@ -37,7 +37,7 @@ async function runKafka() {
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       const event = JSON.parse(message.value.toString());
-      // Emit to all connected socket.io clients
+
       io.emit('order_update', event);
     },
   });
@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// REST Endpoints
+
 app.get('/analytics/orders-per-hour', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -111,7 +111,7 @@ app.get('/analytics/recent-orders', async (req, res) => {
   }
 });
 
-// New Endpoint: Overall Summary
+
 app.get('/analytics/summary', async (req, res) => {
     try {
         const totalReq = await pool.query('SELECT COUNT(DISTINCT order_id) as total FROM order_analytics');

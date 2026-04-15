@@ -33,7 +33,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Glass panel styling */
+
 .glass-panel {
   background: var(--bg-panel);
   backdrop-filter: blur(16px);
@@ -50,7 +50,7 @@ body {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-/* Header */
+
 .app-header {
   padding: 2rem;
   display: flex;
@@ -72,7 +72,7 @@ body {
   gap: 0.75rem;
 }
 
-/* Dashboard Grid */
+
 .dashboard-container {
   padding: 2rem;
   max-width: 1400px;
@@ -93,7 +93,7 @@ body {
   gap: 1.5rem;
 }
 
-/* Metric Card */
+
 .metric-card {
   display: flex;
   flex-direction: column;
@@ -114,7 +114,7 @@ body {
   color: var(--text-primary);
 }
 
-/* Tables */
+
 .table-container {
   width: 100%;
   overflow-x: auto;
@@ -146,7 +146,7 @@ tr:last-child td {
   border-bottom: none;
 }
 
-/* Badges */
+
 .badge {
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
@@ -162,7 +162,7 @@ tr:last-child td {
 .badge.delivered { background: rgba(16, 185, 129, 0.2); color: #10b981; }
 .badge.cancelled { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
 
-/* Animations */
+
 @keyframes pulseGlow {
   0% { box-shadow: 0 0 0 0 var(--accent-glow); }
   70% { box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); }
@@ -179,7 +179,7 @@ tr:last-child td {
   margin-right: 0.5rem;
 }
 
-/* Charts Customization */
+
 .recharts-default-tooltip {
   background-color: var(--bg-panel) !important;
   backdrop-filter: blur(16px);

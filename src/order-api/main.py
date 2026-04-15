@@ -10,7 +10,7 @@ from kafka import KafkaProducer
 
 app = FastAPI(title="Order API")
 
-# Setup Kafka Producer
+
 KAFKA_BROKER = os.getenv("KAFKA_BROKER", "kafka:9092")
 _producer = None
 
@@ -29,7 +29,7 @@ def get_producer():
         print(f"Failed to connect to Kafka: {e}")
         return None
 
-# In-memory storage
+
 orders_db = {}
 
 class OrderItem(BaseModel):
@@ -54,7 +54,7 @@ class UpdateStatusRequest(BaseModel):
 def create_order(req: CreateOrderRequest):
     order_id = str(uuid.uuid4())
     
-    # Calculate dummy amount based on quantity (e.g., $10 per item)
+
     total_amount = sum(item.quantity * 10.0 for item in req.items)
     
     timestamp = datetime.now(timezone.utc).isoformat()
@@ -69,7 +69,7 @@ def create_order(req: CreateOrderRequest):
     
     orders_db[order_id] = order
     
-    # Emit to Kafka
+
     event = order.model_dump()
     prod = get_producer()
     if prod:
@@ -99,7 +99,7 @@ def update_order_status(order_id: str, req: UpdateStatusRequest):
     order.status = req.status
     order.timestamp = datetime.now(timezone.utc).isoformat()
     
-    # Emit update to Kafka
+
     event = order.model_dump()
     prod = get_producer()
     if prod:

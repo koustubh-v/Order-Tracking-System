@@ -9,7 +9,7 @@ import {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 const socket = io(API_URL);
 
-// Chart Colors based on dark theme
+
 const COLORS = ['#38bdf8', '#818cf8', '#34d399', '#fbbf24', '#f87171'];
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
       setRecentOrders(await recentRes.json());
       
       const ad = await avgRes.json();
-      setAvgDeliveryTime(ad.avg_time ? Math.round(parseFloat(ad.avg_time) / 60) : 0); // convert secs to mins
+      setAvgDeliveryTime(ad.avg_time ? Math.round(parseFloat(ad.avg_time) / 60) : 0);
     } catch (error) {
       console.error("Failed to fetch dashboard data", error);
     }
@@ -51,7 +51,6 @@ function App() {
 
     socket.on('order_update', (data) => {
       console.log('Real-time update received:', data);
-      // Fetch full refresh for simplicity in demo
       fetchDashboardData();
     });
 
@@ -75,7 +74,7 @@ function App() {
 
       <main className="dashboard-container">
         
-        {/* Top Metrics Cards */}
+
         <section className="metrics-grid">
           <div className="glass-panel metric-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -110,7 +109,7 @@ function App() {
           </div>
         </section>
 
-        {/* Charts */}
+
         <section className="charts-grid">
           <div className="glass-panel">
             <h3 style={{ marginBottom: '1.5rem', fontSize: '1.25rem', fontWeight: 600 }}>Orders Velocity</h3>
@@ -151,7 +150,7 @@ function App() {
           </div>
         </section>
 
-        {/* Recent Orders Table */}
+
         <section className="glass-panel">
           <h3 style={{ marginBottom: '1.5rem', fontSize: '1.25rem', fontWeight: 600 }}>Live Feed (Recent Orders)</h3>
           <div className="table-container">

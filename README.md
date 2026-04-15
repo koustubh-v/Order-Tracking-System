@@ -92,3 +92,16 @@ Upon initiating the generator:
 2. New `PLACED` orders will dynamically inject into the Live Feed metrics table at the bottom of the interface.
 3. Over the subsequent 15 seconds, background automated consumers (`OrderProcessor`) will pull these events, mutate their attributes, and trigger WebSockets to visually step the user status through `PACKED`, `SHIPPED`, and finally `DELIVERED`.
 4. Visual distribution charts and overall delivery time metrics will calculate and synchronize implicitly without requiring HTTP browser refreshes.
+
+---
+
+## Contributor Guidelines
+
+We welcome contributions from the community. To ensure a smooth collaboration process, please adhere to the following guidelines:
+
+1. **Fork and Clone:** Fork the repository to your own GitHub account and clone it to your local machine.
+2. **Branching Strategy:** Create a dedicated feature branch (`feature/your-feature-name`) or bugfix branch (`bugfix/issue-description`) from the `main` branch.
+3. **Commit Messages:** Write clear, descriptive commit messages outlining the specific changes and the rationale behind them.
+4. **Code Quality:** Ensure your code is clean, well-structured, and strictly free of inline comments prior to submission.
+5. **Pull Requests:** Submit a pull request to the `main` branch. Provide a comprehensive description of the modifications, the problem being solved, and any relevant steps to test the changes.
+6. **Review Process:** The repository maintainers will review the pull request, provide feedback if necessary, and merge it upon approval.

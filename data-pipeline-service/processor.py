@@ -24,7 +24,7 @@ def main():
             print(f"Waiting for Kafka... {e}")
             time.sleep(2)
 
-    # Dictionary to keep track of placed timestamps for delivery metric
+
     order_start_times = {}
 
     print("Listening for events...")
@@ -33,14 +33,14 @@ def main():
         print(f"Received event: {event}")
         
         try:
-            # Parse timestamp and derive hour bucket
+
             dt = datetime.fromisoformat(event["timestamp"].replace("Z", "+00:00"))
             hour_bucket = dt.replace(minute=0, second=0, microsecond=0).isoformat()
             
-            # Store in order_analytics
+
             db.insert_analytics(event, hour_bucket)
             
-            # Track delivery time metric
+
             order_id = event["order_id"]
             if event["status"] == "PLACED":
                 order_start_times[order_id] = dt

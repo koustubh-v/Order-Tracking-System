@@ -31,23 +31,23 @@ def main():
         event = message.value
         status = event.get("status")
         
-        # Only process PLACED events to simulate exactly-once transition
+
         if status == "PLACED":
             order_id = event["order_id"]
             
-            # Simulate processing delay
+
             print(f"Processing Order {order_id}...")
             transitions = ["PACKED", "SHIPPED", "DELIVERED"]
             
             for next_status in transitions:
-                time.sleep(5) # 5 seconds delay per transition for realistic effect
+                time.sleep(5)
                 
-                # Update event copy
+
                 updated_event = event.copy()
                 updated_event["status"] = next_status
                 updated_event["timestamp"] = datetime.now(timezone.utc).isoformat()
                 
-                # Notify OrderAPI to keep sync (optional, keeping both synced)
+
                 try:
                     res = requests.put(
                         f"{ORDER_API_URL}/api/order/status/{order_id}",
@@ -58,10 +58,7 @@ def main():
                 except Exception as e:
                     print(f"API unreachable: {e}")
                 
-                # Producer will also be invoked inside OrderAPI when API is updated,
-                # but depending on setup OrderAPI handles it. If OrderAPI emits Kafka on PUT, 
-                # we don't need to produce directly here to avoid duplicates. 
-                # Since OrderAPI DOES produce on PUT, we just let the API do it.
+
 
 if __name__ == "__main__":
     main()
