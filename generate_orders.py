@@ -1,39 +1,62 @@
-import requests
+import json
 import time
 import random
-import uuid
+import requests
+import pandas as pd
+import os
 
 API_URL = "http://localhost:5000/api/order"
 
-def generate_order():
-    user_id = f"user_{random.randint(100, 999)}"
-    num_items = random.randint(1, 5)
-    items = []
-    
-    for _ in range(num_items):
-        items.append({
-            "product_id": f"prod_{random.randint(1000, 9999)}",
-            "quantity": random.randint(1, 3)
-        })
+def get_product_data():
+    csv_path = "data-pipeline-service/cleaned_combined_products.csv"
+    if os.path.exists(csv_path):
+        df = pd.read_csv(csv_path)
+        return df[['product_id', 'actual_price']].to_dict('records')
+    return None
 
-    payload = {
+def generate_order(product_pool):
+    if product_pool:
+        product = random.choice(product_pool)
+        user_id = f"user_{random.randint(100, 999)}"
+        items = [{"product_id": product['product_id'], "quantity": 1}]
+        amount = product['actual_price'] if product['actual_price'] > 0 else random.randint(10, 150)
+    else:
+        user_id = f"user_{random.randint(1, 1000)}"
+        items = [{"product_id": f"prod_{random.randint(1, 50)}", "quantity": random.randint(1, 3)}]
+        amount = random.randint(10, 150)
+        
+    return {
         "user_id": user_id,
-        "items": items
+        "items": items,
+        "amount": amount
     }
-    
-    try:
-        response = requests.post(API_URL, json=payload)
-        if response.status_code == 200:
-            print(f"✅ Generated order: {response.json()['order_id']} | User: {user_id} | Amount: ${response.json()['amount']}")
-        else:
-            print(f"❌ Failed: {response.status_code} - {response.text}")
-    except Exception as e:
-        print(f"⚠️ API down or unreachable: {e}")
 
-if __name__ == "__main__":
+def main():
     print("🚀 Starting Continuous Order Generator...")
     print("Press Ctrl+C to stop.\n")
+    
+    product_pool = get_product_data()
+    if product_pool:
+        print(f"✅ Loaded {len(product_pool)} products for realistic simulation.")
+    
     while True:
-        generate_order()
-        # Random sleep between 2 and 8 seconds
-        time.sleep(random.randint(2, 8))
+        try:
+            order = generate_order(product_pool)
+            response = requests.post(API_URL, json=order)
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Generated order: {data['order_id']} | User: {data['user_id']} | Amount: ${data['amount']}")
+            else:
+                print(f"❌ Error: {response.text}")
+                
+            time.sleep(random.randint(2, 8))
+        except KeyboardInterrupt:
+            print("\n👋 Stopping generator...")
+            break
+        except Exception as e:
+            print(f"⚠️ Connection error: {e}")
+            time.sleep(5)
+
+if __name__ == "__main__":
+    main()

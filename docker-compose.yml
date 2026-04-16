@@ -1,14 +1,14 @@
+version: '3.8'
+
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.4.0
+    image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
 
   kafka:
-    image: confluentinc/cp-kafka:7.4.0
+    image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
@@ -16,7 +16,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -31,7 +31,8 @@ services:
       - "5432:5432"
 
   order-api:
-    build: ./src/order-api
+    build: 
+      context: ./src/order-api
     ports:
       - "5000:5000"
     environment:
@@ -40,7 +41,8 @@ services:
       - kafka
 
   order-processor:
-    build: ./src/order-processor
+    build:
+      context: ./src/order-processor
     environment:
       KAFKA_BROKER: kafka:9092
       ORDER_API_URL: http://order-api:5000
@@ -49,7 +51,8 @@ services:
       - order-api
 
   data-pipeline-service:
-    build: ./data-pipeline-service
+    build:
+      context: ./data-pipeline-service
     environment:
       KAFKA_BROKER: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/analytics
@@ -58,13 +61,13 @@ services:
       - postgres
 
   analytics-backend:
-    build: ./analytics-backend
+    build:
+      context: ./analytics-backend
     ports:
       - "4000:4000"
     environment:
       KAFKA_BROKER: kafka:9092
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/analytics
-      PORT: 4000
     depends_on:
       - kafka
       - postgres
@@ -72,10 +75,7 @@ services:
   dashboard:
     build:
       context: ./dashboard
-      dockerfile: Dockerfile
     ports:
       - "5173:5173"
-    environment:
-      VITE_API_URL: http://localhost:4000
     depends_on:
       - analytics-backend

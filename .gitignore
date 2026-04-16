@@ -482,3 +482,14 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Project Specific Ignores
+**/cleaned_combined_products.csv
+streaming_checkpoint/
+streaming_data/
+cloud_storage_*/
+delta_lake_storage/
+datasets/
+.gemini/
+*.log
+
