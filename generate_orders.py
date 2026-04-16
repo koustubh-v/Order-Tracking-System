@@ -11,6 +11,8 @@ def get_product_data():
     csv_path = "data-pipeline-service/cleaned_combined_products.csv"
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
+        if 'product_id' not in df.columns:
+            df['product_id'] = [f"AMZ_{i:06d}" for i in range(len(df))]
         return df[['product_id', 'actual_price']].to_dict('records')
     return None
 
@@ -32,12 +34,12 @@ def generate_order(product_pool):
     }
 
 def main():
-    print("🚀 Starting Continuous Order Generator...")
+    print("Starting Continuous Order Generator...")
     print("Press Ctrl+C to stop.\n")
     
     product_pool = get_product_data()
     if product_pool:
-        print(f"✅ Loaded {len(product_pool)} products for realistic simulation.")
+        print(f"SUCCESS: Loaded {len(product_pool)} products for realistic simulation.")
     
     while True:
         try:
@@ -46,16 +48,16 @@ def main():
             
             if response.status_code == 200:
                 data = response.json()
-                print(f"✅ Generated order: {data['order_id']} | User: {data['user_id']} | Amount: ${data['amount']}")
+                print(f"SUCCESS: Generated order: {data['order_id']} | User: {data['user_id']} | Amount: ${data['amount']}")
             else:
-                print(f"❌ Error: {response.text}")
+                print(f"ERROR: {response.text}")
                 
             time.sleep(random.randint(2, 8))
         except KeyboardInterrupt:
-            print("\n👋 Stopping generator...")
+            print("\nStopping generator...")
             break
         except Exception as e:
-            print(f"⚠️ Connection error: {e}")
+            print(f"WARNING: Connection error: {e}")
             time.sleep(5)
 
 if __name__ == "__main__":

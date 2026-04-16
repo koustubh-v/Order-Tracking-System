@@ -51,9 +51,34 @@ The database is structured to support high-performance analytical queries:
     The system automatically seeds the Dimension tables from the included `cleaned_combined_products.csv` on the first startup of the `data-pipeline-service`.
 
 4.  **Simulate Traffic**:
-    Run the order generator to feed the pipeline:
+    Run the order generator to feed the pipeline. This script uses the Amazon dataset to simulate real products:
     ```bash
     python3 generate_orders.py
+    ```
+
+### Testing and Verification
+
+To verify that the end-to-end pipeline is functioning correctly, you can perform the following tests:
+
+1.  **Verify Data Flow (Kafka)**:
+    Inspect the real-time messages moving through the event broker:
+    ```bash
+    docker exec -it real-orders-kafka-1 kafka-console-consumer --bootstrap-server localhost:9092 --topic order_events --from-beginning --property print.timestamp=true --property print.offset=true
+    ```
+
+2.  **Inspect Data Warehouse (PostgreSQL)**:
+    Check the Star Schema tables and row counts to ensure data is being successfully loaded into the Fact and Dimension tables:
+    ```bash
+    docker exec -it real-orders-postgres-1 psql -U postgres -d analytics -c "\dt+; SELECT 'fact_orders' AS table, COUNT(*) FROM fact_orders UNION ALL SELECT 'dim_products', COUNT(*) FROM dim_products;"
+    ```
+
+3.  **Monitor Live Metrics**:
+    Access the React Dashboard at [http://localhost:5173](http://localhost:5173) to view live sales trends, category distribution, and delivery performance metrics.
+
+4.  **Advanced Analytics Check**:
+    Verify the window function calculations by querying the analytics sales trend endpoint:
+    ```bash
+    curl http://localhost:4000/analytics/sales-trend
     ```
 
 ### Accessing the Platform
